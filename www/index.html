@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Geo Location</title>
+<style type="text/css">
+html { height: 100% }
+body { height: 100%; margin: 0; padding: 0 }
+#map-canvas { height: 100% }
+</style>
+<script type="text/javascript" src="cordova.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB-Z20qAn-z6ztXfYHtNWp4hOh7ZgMacdg" type="text/javascript"></script>
+<script type="text/javascript">
+function onSuccess(position) {
+	/*var info = 
+    ('Latitude: '         + position.coords.latitude          + '<br>' +
+    'Longitude: '         + position.coords.longitude         + '<br>' +
+    'Altitude: '          + position.coords.altitude          + '<br>' +
+    'Accuracy: '          + position.coords.accuracy          + '<br>' +
+    'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '<br>' +
+    'Heading: '           + position.coords.heading           + '<br>' +
+    'Speed: '             + position.coords.speed             + '<br>' +
+    'Timestamp: '         + new Date(position.timestamp));
+    document.getElementById('geolocation').innerHTML = info;*/
+
+//start km calculation
+    function distance(lat1, lon1, lat2, lon2, unit) {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lon1-lon2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		if (unit=="KM") { dist = dist * 1.609344 }
+		if (unit=="N") { dist = dist * 0.8684 }
+		return '<br>Distance from M.G Road Gurgaon: '+dist.toFixed(2)+' '+unit;
+	}
+	var info = distance(position.coords.latitude,position.coords.longitude,28.4796004,77.0798767,'KM');
+	document.getElementById('geolocation').innerHTML = info;
+
+//end km
+var lat=position.coords.latitude;
+var lang=position.coords.longitude;
+var myLatlng = new google.maps.LatLng(lat,lang);
+var mapOptions = {zoom: 16,center: myLatlng}
+var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+var marker = new google.maps.Marker({position: myLatlng,map: map});
+}
+function onError(error) {
+console.log('code: ' + error.code + '\n' +'message: ' + error.message + '\n');
+}
+var watchID = navigator.geolocation.watchPosition(onSuccess, onError, { timeout: 3000 });
+google.maps.event.addDomListener(window, 'load', onSuccess);
+
+</script>
+</head>
+<body>
+<div id="geolocation"></div>
+<div id="map-canvas"></div>
+</body>
+</html>
